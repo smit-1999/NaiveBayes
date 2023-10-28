@@ -6,7 +6,6 @@ import string
 def read_data() -> pd.DataFrame:
     directory = './testlanguageID/'
     letters = [char for char in string.ascii_lowercase]
-    #letters.insert(len(letters),'space')
     letters.append('space')
     letters.append('type')
     df = pd.DataFrame(columns=letters)
@@ -30,7 +29,7 @@ def read_data() -> pd.DataFrame:
         df_dictionary = pd.DataFrame([freq])
         df = pd.concat([df, df_dictionary], ignore_index=True)
         print(df)
-        
+
     return df
 if __name__ ==  '__main__':
     df = read_data()
