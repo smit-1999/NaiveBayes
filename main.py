@@ -117,7 +117,7 @@ if __name__ == '__main__':
     test = df.loc[df['file_name'].astype(str).map(len) != 6]
 
     # q1
-    priors = calculate_prior(train)
+    log_prior_e, log_prior_j, log_prior_s = calculate_prior(train)
 
     # q2
     e_conditional = calculate_class_conditional(train, 'e')
@@ -127,9 +127,21 @@ if __name__ == '__main__':
     s_conditional = calculate_class_conditional(train, 's')
 
     # q4, q5
-    estimated_likelihood_test_point_e10_econditional = get_test_document_statistics(
+    log_estimated_likelihood_test_point_e10_econditional, prob_e10_econditional = get_test_document_statistics(
         directory, 'e10.txt', test, e_conditional)
-    estimated_likelihood_test_point_e10_jconditional = get_test_document_statistics(
+    log_estimated_likelihood_test_point_e10_jconditional, prob_e10_jconditional = get_test_document_statistics(
         directory, 'e10.txt', test, j_conditional)
-    estimated_likelihood_test_point_e10_sconditional = get_test_document_statistics(
+    log_estimated_likelihood_test_point_e10_sconditional, prob_e10_sconditional = get_test_document_statistics(
         directory, 'e10.txt', test, s_conditional)
+
+    # q6
+    log_posterior_e = log_estimated_likelihood_test_point_e10_econditional + log_prior_e
+    log_posterior_j = log_estimated_likelihood_test_point_e10_jconditional + log_prior_j
+    log_posterior_s = log_estimated_likelihood_test_point_e10_sconditional + log_prior_s
+
+    print('Log posterior values', log_posterior_e,
+          log_posterior_j, log_posterior_s)
+    max_posterior = max(log_posterior_e, log_posterior_j, log_posterior_s)
+    pred_label = 'e' if max_posterior is log_posterior_e else 's' if max_posterior is log_posterior_s else 'j'
+    print('Predicted label is ', pred_label, 'having posterior log probability as ',
+          max_posterior, 'which means a probability equal to  1/e^', abs(max_posterior))
