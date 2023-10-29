@@ -57,24 +57,31 @@ def calculate_prior(df: pd.DataFrame):
 def calculate_class_conditional(df: pd.DataFrame, label: string):
     # laplace smoothing factor
     alpha = 0.5
+
     # in whole training dataframe filter out rows for the particular label
     df = df.loc[df['file_name'].astype(str).str[0] == label]
+
     # print('Dataframe having filtered out rows for the particular label', df)
+
     # take only characters
     df = df.iloc[:, : 27]
     # print('Dataframe after filtering only letters and spaces as the features', df)
+
     likelihood = {}
     likelihood = dict.fromkeys(df.columns, 0)
     total = df.to_numpy().sum() + (alpha*27)
     print('Total sum of dataframe along with laplace smoothing for label',
           label, 'is',  total)
+
     for col in df.columns:
         col_sum = df[col].to_numpy().sum() + alpha
         prob = col_sum/total
         log_prob = math.log(prob)
         likelihood[col] = (col_sum, prob, log_prob)
-    res = tuple(sum(x) for x in zip(*likelihood.values()))
+    print('Likelihood dictionary for label', label, 'is', likelihood)
+
     # sum of probabilities should be 1
+    res = tuple(sum(x) for x in zip(*likelihood.values()))
     print('Sum of tuple values of likelihood dictionary for label', label, 'is',  res)
     return likelihood
 
