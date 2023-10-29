@@ -86,6 +86,28 @@ def calculate_class_conditional(df: pd.DataFrame, label: string):
     return likelihood
 
 
+def get_test_document_statistics(directory: string, filename: string, df: pd.DataFrame, conditional: pd.DataFrame):
+    df = df.loc[df['file_name'] == filename]
+    df = df.iloc[:, :27]
+    print('Bag of characters vector for', filename,
+          'is', df.to_string(index=False))
+    log_sum = 0
+    prob = 1
+    with open(directory+filename) as fileObj:
+        for line in fileObj:
+            for ch in line:
+                if ch == '\n':
+                    continue
+                elif ch == ' ':
+                    log_sum += conditional['space'][2]
+                    prob *= conditional['space'][1]
+                else:
+                    log_sum += conditional[ch][2]
+                    prob *= conditional[ch][1]
+    print('Log sum and probability value for ', filename, 'is', log_sum, prob)
+    return log_sum, prob
+
+
 if __name__ == '__main__':
     directory = './languageID/'
     df = read_data(directory)
@@ -94,7 +116,20 @@ if __name__ == '__main__':
     train = df.loc[df['file_name'].astype(str).map(len) == 6]
     test = df.loc[df['file_name'].astype(str).map(len) != 6]
 
+    # q1
     priors = calculate_prior(train)
+
+    # q2
     e_conditional = calculate_class_conditional(train, 'e')
+
+    # q3
     j_conditional = calculate_class_conditional(train, 'j')
     s_conditional = calculate_class_conditional(train, 's')
+
+    # q4, q5
+    estimated_likelihood_test_point_e10_econditional = get_test_document_statistics(
+        directory, 'e10.txt', test, e_conditional)
+    estimated_likelihood_test_point_e10_jconditional = get_test_document_statistics(
+        directory, 'e10.txt', test, j_conditional)
+    estimated_likelihood_test_point_e10_sconditional = get_test_document_statistics(
+        directory, 'e10.txt', test, s_conditional)
