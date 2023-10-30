@@ -36,6 +36,15 @@ def visualize(index: int):
     plt.show()
 
 
+def visualize_distribution(y_value):
+    y_value = y_value.ravel()
+    x_value = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    plt.xlabel('label')
+    plt.ylabel('count')
+    plt.bar(x_value, y_value, 0.7, color='g')
+    plt.show()
+
+
 if __name__ == "__main__":
     mnist = datasets.MNIST(
         root='./data', download=True)
@@ -62,6 +71,9 @@ if __name__ == "__main__":
     print("Train data")
     sumi = 0
     y_value = np.zeros((1, 10))
+    print(y_value)
     for i in range(10):
         print("Occurence of ", i, "=", np.count_nonzero(train_labels == i))
         y_value[0, i-1] = np.count_nonzero(train_labels == i)
+    
+    # visualize_distribution(y_value)
