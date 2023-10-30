@@ -1,2 +1,6 @@
 languageID/
 *.txt
+*.gz
+*-ubyte
+*.csv
+*.zip
