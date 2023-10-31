@@ -83,14 +83,18 @@ def calculate_class_conditional(df: pd.DataFrame, label: string):
     # sum of probabilities should be 1
     res = tuple(sum(x) for x in zip(*likelihood.values()))
     print('Sum of tuple values of likelihood dictionary for label', label, 'is',  res)
+    theta_e = []
+    for k in likelihood.keys():
+        theta_e.append({k: likelihood[k][1]})
+    print(theta_e)
     return likelihood
 
 
 def get_test_document_statistics(directory: string, filename: string, df: pd.DataFrame, conditional: pd.DataFrame):
     df = df.loc[df['file_name'] == filename]
     df = df.iloc[:, :27]
-    print('Bag of characters vector for', filename,
-          'is', df.to_string(index=False))
+    # print('Bag of characters vector for', filename,
+    #       'is', df.to_string(index=False))
     log_sum = 0
     prob = 1
     with open(directory+filename) as fileObj:
@@ -111,7 +115,7 @@ def get_test_document_statistics(directory: string, filename: string, df: pd.Dat
 if __name__ == '__main__':
     directory = './languageID/'
     df = read_data(directory)
-    print('Loaded dataframe shape is', df.shape)
+    # print('Loaded dataframe shape is', df.shape)
 
     train = df.loc[df['file_name'].astype(str).map(len) == 6]
     test = df.loc[df['file_name'].astype(str).map(len) != 6]
@@ -140,11 +144,11 @@ if __name__ == '__main__':
         log_posterior_j = log_estimated_likelihood_test_point_e10_jconditional + log_prior_j
         log_posterior_s = log_estimated_likelihood_test_point_e10_sconditional + log_prior_s
 
-        print('Log posterior values', log_posterior_e,
+        print('Log posterior values for ', filename, 'is', log_posterior_e,
               log_posterior_j, log_posterior_s)
         max_posterior = max(log_posterior_e, log_posterior_j, log_posterior_s)
         pred_label = 'e' if max_posterior is log_posterior_e else 's' if max_posterior is log_posterior_s else 'j'
-        print('Predicted label is ', pred_label, 'having posterior log probability as ',
+        print('Predicted label for filename ', filename, 'is ', pred_label, 'having posterior log probability as ',
               max_posterior, 'which means a probability equal to  1/e^', abs(max_posterior))
         return pred_label
     pred_label_e10 = predict('e10.txt')
